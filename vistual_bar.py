@@ -29,11 +29,11 @@ def get_colors(n):
 
 
 #堆叠图
-def bar(file):
+def bar(inutfile,output_file):
     print('ploting')
-    if os.path.exists(file):
+    if os.path.exists(inutfile):
         try:
-            csv_df = pd.read_csv(file, encoding='utf-8-sig')
+            csv_df = pd.read_csv(inutfile, encoding='utf-8-sig')
         except Exception as e:
             return
 
@@ -426,10 +426,7 @@ def bar(file):
     # 调整整体布局并保存
     plt.tight_layout()
 
-    # 确保输出目录存在
-    #output_dir = os.path.dirname(file)
-
     # 只保存合并后的图像
-    plt.savefig(r'D:\1\researches\中期\DJ\dj\Filter_T\combined_plots1.png',
+    plt.savefig(output_file,
                 dpi=800, format='png', bbox_inches='tight')
-bar(file=r'D:\1\researches\中期\DJ\dj\Filter_T\Filter.csv')
+

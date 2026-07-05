@@ -12,7 +12,7 @@ import re
 from matplotlib.patches import Rectangle
 
 
-def pie(file):
+def pie(file,output_fp_csv,output_fp_fig):
     print('ploting pie')
     if os.path.exists(file):
         try:
@@ -21,11 +21,6 @@ def pie(file):
             print(f"Error reading CSV file: {e}")
             return
 
-
-    # 输出
-    output_fp = os.path.dirname(file)
-    output_fp_csv = os.path.join(output_fp,'species_condition.csv')
-    output_fp_fig = os.path.join(output_fp,'pie.png')
     # 增加图形高度，为底部文本框留出空间
     fig, axes = plt.subplots(1, 2, figsize=(12, 8))
     ax1, ax2 = axes[0], axes[1]
@@ -244,14 +239,8 @@ def pie(file):
     # 添加整体标题
     plt.suptitle('ISPCR Analysis Results', fontsize=18, fontweight='bold', y=0.95)
 
-    # output
-    #output_dir = os.path.dirname(file)
-    #output_path = 'D:/1/researches/中期/2/last/dq/Cluster/pie.png'
     plt.savefig(output_fp_fig, format='png', dpi=800, bbox_inches='tight')
     print(f"pie figure saved in: {output_fp_fig}")
     print(f'species condition saved in: {output_fp_csv}')
     print('\n')
     print('Sequences to filter or not NEED combine Cluster results')
-
-
-pie(file=r'D:\1\researches\中期\DJ\dj\Filter_T\Filter.csv')

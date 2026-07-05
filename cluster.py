@@ -2,6 +2,7 @@ from Bio import SeqIO
 import os
 import pandas as pd
 import subprocess
+from pathlib import Path
 
 
 def cluster_sequences(input_fasta, threshold):
@@ -106,12 +107,6 @@ def cluster(csv_path, file_path, threshold):
 
         output_dir_cluster_seq = os.path.join(output_dir_file, 'Combined_Cluster.fasta')
         SeqIO.write(combined_seqs, output_dir_cluster_seq, format='fasta')
-
-
-
-
-
-
 
     else:
         print('files do not exist')

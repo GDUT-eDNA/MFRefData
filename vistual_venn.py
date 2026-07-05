@@ -1158,16 +1158,4 @@ def venn(file, species_list, formation=False, format_path=False, output_dir=Fals
 
     return mf_df, third_df, overlap_df, mf_unique_df, third_unique_df
 
-# venn(
-#     file=r'D:\1\researches\中期\DJ\dj\Filter_T\Filter.csv',
-#     species_list='D:/1/researches/中期/DJ/dj/dj.txt',
-#     output_dir=r'D:\1\researches\中期\DJ\dj\Filter_T\venn_output'
-# )
 
-venn(
-    file=r'D:\1\researches\中期\DJ\dj\Filter_T\Filter.csv',
-    species_list='D:/1/researches/中期/DJ/dj/dj.txt',
-    formation='DADA2',
-    format_path=r'C:\Users\25327\Downloads\silva_nr99_v138.2_toSpecies_trainset.fa~1',
-    output_dir=r'D:\1\researches\中期\DJ\dj\Filter_T\venn_output'
-)

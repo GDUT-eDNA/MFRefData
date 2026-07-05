@@ -1,13 +1,13 @@
 import pandas as pd
-import requests
 import os
-import tarfile
-#
-def download_NCBI_dump(path):
+from pathlib import Path
 
+
+def download_NCBI_dump(path):
     return print('download dump files successfully')
 
-def totax(csv, dump, download_dump = False,download_path = None):
+
+def totax(csv, dump, download_dump=False, download_path=None):
     if download_dump and download_path == True:
         download_NCBI_dump(download_path)
         return
@@ -17,7 +17,7 @@ def totax(csv, dump, download_dump = False,download_path = None):
             print('pleasure ensure csv files exist')
             return
 
-        if  os.path.exists(dump) == True:
+        if os.path.exists(dump) == True:
             names_path = os.path.join(dump, 'names.dmp')
             nodes_path = os.path.join(dump, 'nodes.dmp')
             if os.path.exists(names_path) & os.path.exists(nodes_path) == True:
@@ -25,25 +25,25 @@ def totax(csv, dump, download_dump = False,download_path = None):
             else:
                 return print('dump files is missing')
             input_csv = pd.read_csv(csv)
-            #
+            
             output_path_dir = os.path.dirname(os.path.dirname(csv))
             output_path = os.path.join(output_path_dir, 'Totax')
-            os.makedirs(output_path, exist_ok= True)
-            #
+            os.makedirs(output_path, exist_ok=True)
+            
             print('this step is compatible with NCBI sequences with taxid')
             print('sequences without taxid value will be junmped')
             print('\n')
             print('reload csv file successfully')
-            name_dmp = pd.read_table(names_path, sep='\t\\|\t',engine='python', header=None)
+            name_dmp = pd.read_table(names_path, sep='\t\\|\t', engine='python', header=None)
             print('reload names.dmp file successful')
-            node_dmp = pd.read_table(nodes_path, sep='\t\\|\t',engine='python', header=None)
+            node_dmp = pd.read_table(nodes_path, sep='\t\\|\t', engine='python', header=None)
             print('reload nodes.dmp file successful')
 
-            # 修改点1: 确保node_dmp的第一列是数值类型，以便正确匹配
+            # 确保node_dmp的第一列是数值类型，以便正确匹配
             node_dmp[0] = pd.to_numeric(node_dmp[0], errors='coerce')
             node_dmp[1] = pd.to_numeric(node_dmp[1], errors='coerce')
 
-            #建立集合
+            # 建立集合
             list_lineage_all = []
 
             # 去除重复taxid
@@ -59,7 +59,7 @@ def totax(csv, dump, download_dump = False,download_path = None):
                 else:
                     current_taxid = taxid  # 修改点4: 使用临时变量，避免修改循环变量
                     while current_taxid != 1:
-                        #找到行
+                        # 找到行
                         tax_row = node_dmp[node_dmp[0] == current_taxid]
                         # 修改点5: 添加空值检查
                         if tax_row.empty:
@@ -68,7 +68,7 @@ def totax(csv, dump, download_dump = False,download_path = None):
                         tax_level = tax_row.iloc[0, 2]
                         list_lineage_single.append((current_taxid, tax_level))
                         current_taxid = int(tax_row.iloc[0, 1])
-                    # 修改点6: 只有在成功到达根节点时才添加root
+                    # 只有在成功到达根节点时才添加root
                     if current_taxid == 1:
                         list_lineage_single.append((1, 'all_root'))
                 list_lineage_all.append(list_lineage_single[::-1])
@@ -116,11 +116,10 @@ def totax(csv, dump, download_dump = False,download_path = None):
                 # print(list_lineage_with_name)
                 list_lineage_all_with_name.append(list_lineage_with_name)
 
-
             # for i in list_lineage_all_with_name:
             #     print(i)
 
-            #输出匹配full_lineage
+            # 输出匹配full_lineage
             dict_taxid_lineage = {}
             for i, lineage in enumerate(list_lineage_all_with_name):
                 # 获取对应的taxid（按顺序）
@@ -129,9 +128,8 @@ def totax(csv, dump, download_dump = False,download_path = None):
                 formatted_lineage = []
                 for node in lineage:
                     formatted_lineage.append(f'{node[0]}_{node[1]}_{node[2]}')
-                #使用空格连接所有节点
-                dict_taxid_lineage[taxid] = lineage#'  '.join(formatted_lineage)
-
+                # 使用空格连接所有节点
+                dict_taxid_lineage[taxid] = lineage  # '  '.join(formatted_lineage)
 
             # 输出指定lineage
             input_csv['kingdom'] = ''
@@ -141,13 +139,11 @@ def totax(csv, dump, download_dump = False,download_path = None):
             input_csv['family'] = ''
             input_csv['genus'] = ''
             input_csv['species'] = ''
-
             input_csv['full_lineage'] = ''
-
 
             for index, row in input_csv.iterrows():
                 taxid = row['taxid']
-                #print(taxid)
+                # print(taxid)
                 for lineage in list_lineage_all_with_name:
                     # 先判断是否为空，因为lineage有空值
                     if not lineage:
@@ -157,7 +153,7 @@ def totax(csv, dump, download_dump = False,download_path = None):
                     # 根据taxid查找结果的最后一项都为taxid，再在有数据的里面进行匹配
                     if taxid != lineage[-1][0]:
                         continue
-                        #print(f'species {taxid} is missing in {lineage}')
+                        # print(f'species {taxid} is missing in {lineage}')
 
                     if taxid == lineage[-1][0]:
                         input_csv.at[index, 'kingdom'] = 'na'
@@ -191,22 +187,21 @@ def totax(csv, dump, download_dump = False,download_path = None):
                         # print(type(full_lineage_fomatted))
                         input_csv.at[index, 'full_lineage'] = full_lineage_fomatted
 
-
             for index, row in input_csv.iterrows():
-                if not row['class'] and not row['kingdom'] and not row['phylum'] and not row['family'] and not row['species'] and not row['genus'] and not row['order']:
-                    input_csv.loc[index,'kingdom'] = 'na'
-                    input_csv.loc[index,'phylum'] = 'na'
-                    input_csv.loc[index,'class'] = 'na'
-                    input_csv.loc[index,'order'] = 'na'
-                    input_csv.loc[index,'family'] = 'na'
-                    input_csv.loc[index,'genus'] = 'na'
-                    input_csv.loc[index,'species'] = 'na'
+                if not row['class'] and not row['kingdom'] and not row['phylum'] and not row['family'] and not row[
+                    'species'] and not row['genus'] and not row['order']:
+                    input_csv.loc[index, 'kingdom'] = 'na'
+                    input_csv.loc[index, 'phylum'] = 'na'
+                    input_csv.loc[index, 'class'] = 'na'
+                    input_csv.loc[index, 'order'] = 'na'
+                    input_csv.loc[index, 'family'] = 'na'
+                    input_csv.loc[index, 'genus'] = 'na'
+                    input_csv.loc[index, 'species'] = 'na'
                     input_csv.loc[index, 'full_lineage'] = 'na'
-
-
 
     input_csv.to_csv(f'{output_path}/Totax.csv', index=False, encoding='utf_8_sig')
     print('finish totax')
+
 
 if __name__ == "__main__":
     work_dir = './work'
@@ -215,4 +210,3 @@ if __name__ == "__main__":
         csv=os.path.join(work_dir, 'Cluster', 'Cluster_info.csv'),
         dump=r'./taxdmp'
     )
-

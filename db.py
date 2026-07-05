@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import re
 from Bio import SeqIO
 from io import StringIO
+from pathlib import Path
 
 tool = 'MFdb'
 geo_pattern = re.compile(r'/geo_loc_name\s*=\s*"([^"]+)"')
@@ -46,7 +47,6 @@ def download_NCBI(path, region, count):
     taxid_cache = {}
     start = time.time()
 
-
     def get_taxid(species_name):
         if species_name in taxid_cache:
             return taxid_cache[species_name]
@@ -73,11 +73,11 @@ def download_NCBI(path, region, count):
 
             # 保持NCBI速率限制：3次/秒
             request_end = time.time() - request_start
-            print('taxid:',request_end)
+            print('taxid:', request_end)
             if request_end < 0.34:
                 time.sleep(0.34 - request_end)
                 final_time = time.time() - request_start
-                print('taxid final',final_time)
+                print('taxid final', final_time)
             time.sleep(0.07)
             return taxid
         except Exception as e:
@@ -137,10 +137,9 @@ def download_NCBI(path, region, count):
                     time.sleep(0.34 - request_end)
                 continue
 
-            real_download_num = min(seq_exist,download_count_per_species)
+            real_download_num = min(seq_exist, download_count_per_species)
             taxid_path = os.path.join(output_dir_sequence, f"{species}_{taxid}")
             os.makedirs(taxid_path, exist_ok=True)
-
 
             GI_accessions = [id_tag.text for id_tag in soup.find_all("Id")]
             num_seq = num_seq + len(GI_accessions)
@@ -148,7 +147,7 @@ def download_NCBI(path, region, count):
             # 保持NCBI速率限制
             request_end = time.time() - request_start
             if request_end < 0.34:
-               time.sleep(0.34 - request_end)
+                time.sleep(0.34 - request_end)
 
             # 下载序列
             download_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
@@ -158,15 +157,15 @@ def download_NCBI(path, region, count):
                 "retmode": "text",
                 "query_key": query_element,
                 "WebEnv": webenv_element,
-                "retstart":0,
-                "retmax":real_download_num
+                "retstart": 0,
+                "retmax": real_download_num
             }
 
             content = ''
             request_start = time.time()
 
             try:
-                response = session.get(download_url, params=params,stream=True, timeout=(12, 20))
+                response = session.get(download_url, params=params, stream=True, timeout=(12, 20))
                 response.raise_for_status()
                 content_chunks = []
                 for chunk in response.iter_content(chunk_size=131072, decode_unicode=True):
@@ -180,7 +179,7 @@ def download_NCBI(path, region, count):
                 print(e)
                 print(f'try download {taxid} again with {len(GI_accessions)}:')
                 print(f'{GI_accessions}')
-                print("first:",first_attempt)
+                print("first:", first_attempt)
 
                 part_real_download_num = real_download_num // 2
                 part_start = 0
@@ -201,7 +200,7 @@ def download_NCBI(path, region, count):
                         part_real_download_num = real_download_num - part_real_download_num
 
                         request_start = time.time()
-                        response = session.get(download_url, params=params,stream=True, timeout=(12, 20))
+                        response = session.get(download_url, params=params, stream=True, timeout=(12, 20))
                         response.raise_for_status()
 
                         content_chunks = []
@@ -254,10 +253,10 @@ def download_NCBI(path, region, count):
 
                         try:
                             record = record.rstrip() + '\n//\n'
-                            for seq_record in SeqIO.parse(StringIO(record),format='gb'):
+                            for seq_record in SeqIO.parse(StringIO(record), format='gb'):
                                 fasta_filename = os.path.join(taxid_path, f'{GI}.fasta')
                                 with open(fasta_filename, 'w', encoding='utf-8') as f:
-                                    SeqIO.write(seq_record,f,format='fasta')
+                                    SeqIO.write(seq_record, f, format='fasta')
 
                         except Exception as e:
                             print(f"Failed to parse sequence {GI}: {str(e)}")
@@ -265,7 +264,7 @@ def download_NCBI(path, region, count):
 
                 # 保持NCBI速率限制
                 request_end = time.time() - request_start
-                print('download:',request_end)
+                print('download:', request_end)
                 print('\n')
                 if request_end < 0.34:
                     time.sleep(0.34 - request_end)
@@ -273,7 +272,6 @@ def download_NCBI(path, region, count):
             print(f" {species} need be focused: {str(e)}")
             print('\n')
             continue
-
 
     # 保存CSV
     output_path = os.path.join(output_file, "sequence_info.csv")
@@ -286,10 +284,11 @@ def download_NCBI(path, region, count):
 
     return 0
 
+
 if __name__ == "__main__":
     work_dir = './work'
     Path(work_dir).mkdir(parents=True, exist_ok=True)
-    Species_list = example.txt
+    Species_list = 'example.txt'
     Species_region = '12s'
     download_NCBI(
         path=os.path.join(work_dir, Species_list),

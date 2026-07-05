@@ -286,6 +286,13 @@ def download_NCBI(path, region, count):
 
     return 0
 
-# download_NCBI(path='D:/1/researches/model/fdq/细菌/3.txt', region='16s', count=100)
-download_NCBI(path=r'F:\gdut\学习\3答辩\嵌入\dq\1.txt', region='COI', count=10)
-#download_NCBI(path='D:/1/researches/中期/2024gz12stele02/weizhi/未知fish.txt', region='12s', count=100)
+if __name__ == "__main__":
+    work_dir = './work'
+    Path(work_dir).mkdir(parents=True, exist_ok=True)
+    Species_list = example.txt
+    Species_region = '12s'
+    download_NCBI(
+        path=os.path.join(work_dir, Species_list),
+        region=Species_region,
+        count=100
+    )

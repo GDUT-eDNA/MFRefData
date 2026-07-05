@@ -3,6 +3,7 @@ from Bio import SeqIO
 import os
 import pandas as pd
 import numpy as np
+from pathlib import Path
 
 degenerate_base_set = {
     'A': {'A'}, 'T': {'T'}, 'C': {'C'}, 'G': {'G'},

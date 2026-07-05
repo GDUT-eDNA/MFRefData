@@ -1,6 +1,7 @@
 import pandas as pd
 from Bio import SeqIO
 import os
+from pathlib import Path
 
 
 # 可实现多参数过滤

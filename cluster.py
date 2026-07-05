@@ -1,14 +1,12 @@
-
 from Bio import SeqIO
 import os
 import pandas as pd
 import subprocess
 
 
-
 def cluster_sequences(input_fasta, threshold):
     uc_file = "clusters.uc"
-    vsearch_path = r'F:\gdut\学习\2中期\2\vsearch-2.30.0-win-x86_64\bin\vsearch.exe'
+    vsearch_path = r'./vsearch/bin/vsearch.exe'
     cmd = [
         vsearch_path,
         "--cluster_size", input_fasta,
@@ -24,17 +22,15 @@ def cluster_sequences(input_fasta, threshold):
         print(f"cluster fall: {e}")
         return []
 
-    #数据过大
+    # 数据过大
     if not os.path.exists(uc_file) or os.path.getsize(uc_file) == 0:
         cluster_info = []
-        for seq_record in SeqIO.parse(input_fasta,format='fasta'):
+        for seq_record in SeqIO.parse(input_fasta, format='fasta'):
             cluster_info.append({
                 "name": seq_record.id,
                 "represent": f"na"
             })
         return cluster_info
-
-
 
     file = pd.read_table(uc_file, encoding='utf-8-sig', header=None, sep='\t')
     # print(file)
@@ -92,30 +88,24 @@ def cluster(csv_path, file_path, threshold):
             if file.endswith('.fasta') == False:
                 print(f'{file_path} has wrong {file} file，ignored')
             else:
-                cluster_info.extend(cluster_sequences(input_fasta=input_path_cluster,threshold=threshold))
+                cluster_info.extend(cluster_sequences(input_fasta=input_path_cluster, threshold=threshold))
                 for seq_record in SeqIO.parse(input_path_cluster, format='fasta'):
                     combined_seqs.append(seq_record)
 
-
-
         df_cluster_info = pd.DataFrame(cluster_info)
-        #print(df_cluster_info)
+        # print(df_cluster_info)
 
-
-        df_merge = pd.merge(df,df_cluster_info,on='name',how='left')
+        df_merge = pd.merge(df, df_cluster_info, on='name', how='left')
 
         for index, row in df_merge.iterrows():
             if row['represent'] == '':
-                df_merge.loc[index,'represent'] = uncluster_999
+                df_merge.loc[index, 'represent'] = "uncluster_999"
 
-        output_dir_cluster_csv = os.path.join(output_dir_file,'Cluster_info.csv')
-        df_merge.to_csv(output_dir_cluster_csv, index=False , encoding="utf-8-sig")
+        output_dir_cluster_csv = os.path.join(output_dir_file, 'Cluster_info.csv')
+        df_merge.to_csv(output_dir_cluster_csv, index=False, encoding="utf-8-sig")
 
         output_dir_cluster_seq = os.path.join(output_dir_file, 'Combined_Cluster.fasta')
         SeqIO.write(combined_seqs, output_dir_cluster_seq, format='fasta')
-
-
-        #添加无法过滤的检查
 
 
 
@@ -128,7 +118,11 @@ def cluster(csv_path, file_path, threshold):
         return
 
 
-cluster(file_path=r'F:\gdut\学习\3答辩\嵌入\dq\ISPCR\ISPCR_sequence',
-        csv_path=r'F:\gdut\学习\3答辩\嵌入\dq\ISPCR\ISPCR_info.csv', threshold=0.97)
-
-
+if __name__ == "__main__":
+    work_dir = './work'
+    Path(work_dir).mkdir(parents=True, exist_ok=True)
+    cluster(
+        file_path=os.path.join(work_dir, 'ISPCR', 'ISPCR_sequence'),
+        csv_path=os.path.join(work_dir, 'ISPCR', 'ISPCR_info.csv'),
+        threshold=0.97
+    )

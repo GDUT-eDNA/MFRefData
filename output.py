@@ -306,4 +306,12 @@ def output(type, file, refcsv):
     if type == 'mothur':
         output_mothur(fasta_file=file, refcsv=refcsv)
 
-output(type='BLAST',file=r'C:\Users\25327\Desktop\mock community\sequences\mf\Riaz-12S\Filter_T\Filter.fasta',refcsv=r'C:\Users\25327\Desktop\mock community\sequences\mf\12S-V5\Filter_T\Filter.csv')
+if __name__ == "__main__":
+    work_dir = './work'
+    Path(work_dir).mkdir(parents=True, exist_ok=True)
+    Output_type = 'qiime2'  # qiime2 sintax RDP BLAST kraken2 DADA2 mothur
+    output(
+        type=Output_type, 
+        file=os.path.join(work_dir, 'Filter_5000', 'Filter.fasta'),
+        refcsv=os.path.join(work_dir, 'Filter_5000', 'Filter.csv')
+    )

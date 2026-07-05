@@ -3,9 +3,10 @@
 > MFRefData
 
 ---
-This README is available in English and Chinese. Click the link to access different versions.
 
-本说明文档提供英文和中文两个版本，点击链接前往不同版本[English](#english-version) | [中文](#中文版本)  
+本说明文档提供英文和中文两个版本
+
+点击链接前往不同版本[English](#english-version) | [中文](#中文版本)  
 
 ---  
 
@@ -40,7 +41,20 @@ This project is designed for:
 #### Dependencies:
 
 ```python
-pandas, beautifulsoup4, lxml, etc.
+pandas,beautifulsoup4,lxml,biopython,
+matplotlib,squarify,matplotlib-venn,requests, etc.
+```
+
+### Environment Setup:
+
+```python
+# Clone the project repository
+git clone https://github.com/GDUT-eDNA/MFRefData.git
+# Create a Conda environment
+conda create -n MFRefData python=3.10 -y
+# Install dependencies
+pip install pandas beautifulsoup4 lxml requests
+pip install biopython matplotlib squarify matplotlib-venn
 ```
 
 ---
@@ -50,23 +64,16 @@ pandas, beautifulsoup4, lxml, etc.
 ```text
 project/
     │── taxdmp/             # Folder containing files required for annotation
-
     │── vsearch/            # Folder containing files required for clustering
-
     │── cluster.py          # Clustering
     │── db.py               # Sequence downloading
     │── extend.py           # Extension
     │── filter.py           # Filtering
     │── output.py           # Output
-
     │── remove_primers.py   # Primer removal
-
     │── totax.py            # Annotation
-
     │── visual_bar.py       # Visualization of species composition and distribution
-
     │── visual_pie.py       # Visualization of amplification results
-
     │── visual_venn.py      # Visualization of database comparisons
 ```
 
@@ -77,6 +84,7 @@ project/
 #### 4.1 Data Preparation
 
 - Species list
+- Create a virtual environment
 
 #### 4.2 Example Usage
 
@@ -114,8 +122,6 @@ python main.py -list species1.txt -region 12s -type sintax
 python main.py -list species2.txt -region 18s -type qiime2
 ```
 
-
-
 ---
 
 <a id="中文版本"></a>
@@ -144,32 +150,39 @@ python main.py -list species2.txt -region 18s -type qiime2
 #### 依赖：
 
 ```python
-pandas、beautifulsoup4、lxml等
+pandas、beautifulsoup4、lxml、biopython、
+matplotlib、squarify、matplotlib-venn、requests等
+```
+
+#### 环境建立：
+
+```python
+#项目下载
+git clone https://github.com/GDUT-eDNA/MFRefData.git
+#创建环境
+conda create -n MFRefData python=3.10 -y
+#安装依赖
+pip install pandas beautifulsoup4 lxml requests
+pip install biopython matplotlib squarify matplotlib-venn
 ```
 
 ----
 
 ## ⚙️3.函数介绍
+
 ```text
 project/  
         │── taxdmp/           #注释所需文件夹
-
         │── vsearch/           #聚类所需文件夹
-
         │── cluster.py         #聚类 
         │── db.py                #下载序列 
         │── extend.py        #扩展 
         │── filter.py            #过滤
         │── output.py        #输出
-
         │── remove_primers.py #去引物 
-
         │── totax.py           #注释
-
         │── visual_bar.py          #物种组成与分布可视化
-
         │── visual_pie.py          #扩增情况可视化
-
         │── visual_venn.py          #数据库对比可视化
 ```
 
@@ -180,6 +193,7 @@ project/
 #### 4.1 数据准备：
 
 - 物种名录
+- 创建虚拟环境
 
 #### 4.2 示例使用：
 

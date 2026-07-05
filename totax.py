@@ -208,4 +208,11 @@ def totax(csv, dump, download_dump = False,download_path = None):
     input_csv.to_csv(f'{output_path}/Totax.csv', index=False, encoding='utf_8_sig')
     print('finish totax')
 
-totax(csv = r'F:\gdut\学习\3答辩\嵌入\dq\Cluster\Cluster_info.csv', dump= r'F:\gdut\学习\2中期\1\taxdmp')
+if __name__ == "__main__":
+    work_dir = './work'
+    Path(work_dir).mkdir(parents=True, exist_ok=True)
+    totax(
+        csv=os.path.join(work_dir, 'Cluster', 'Cluster_info.csv'),
+        dump=r'./taxdmp'
+    )
+

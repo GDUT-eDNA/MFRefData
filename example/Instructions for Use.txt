@@ -1,0 +1,5 @@
+1. Place the Dongjiang_River_Species_List.txt file in the work folder.
+2. Run the following command:
+python main.py -list Dongjiang_River_Species_List.txt -region 12s -type qiime2
+
+For detailed information, please refer to the README file.
